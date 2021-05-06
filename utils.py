@@ -1,11 +1,8 @@
 import os
-import json
 
-from constants import NODES, RELATIONS, PARENTS, PROBABILITIES, REQUIRED_KEYS
 from constants import INDENT
-from node import Node
 
-class ConditionalProbability():
+class ConditionalProbability:
     """Used for storing atomized key values and corresponding
     probabilities."""
 
@@ -19,7 +16,7 @@ class ConditionalProbability():
         msg += str(self.probability)
         return msg
 
-    def __eq__(self):
+    def __eq__(self, other):
         return self.child == other.child and self.parents == other.parents
 
     def __lt__(self, other):
@@ -91,33 +88,6 @@ def check_json(data, required):
             return False
     return True
 
-def load_json(filename):
-    """Loads json file into the dictionary of nodes."""
-    nodes = {}
-    if not check_file(filename):
-        return nodes
-    data = None
-    with open(filename, 'r') as file:
-        data = json.load(file)
-        file.close()
-    if not check_json(data, REQUIRED_KEYS):
-        return nodes
-    for node_name in data[NODES]:
-        parents = data[RELATIONS][node_name][PARENTS]
-        probability_table = data[RELATIONS][node_name][PROBABILITIES]
-        probabilities = []
-        for item in probability_table.items():
-            parents, child = split_key(item[0])
-            probability = item[1]
-            probabilities.append(ConditionalProbability(parents, child,
-                probability))
-        node = Node(parents=parents, probabilities=probabilities)
-        if not node.validate():
-            print('Node ', node_name, ' invalid.')
-            break
-        nodes[node_name] = node
-    return nodes
-
 def indent(n=1, indent=INDENT):
     """Returns string defined as n times indentation."""
     msg = ''
@@ -153,8 +123,6 @@ def main(args):
             print('>>no parents<<')
         print(split_single[0])
         print(split_single[1])
-    elif args[0] == 'json':
-        load_json(args[1])
 
 if __name__ == '__main__':
     import sys

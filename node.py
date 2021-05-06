@@ -1,7 +1,7 @@
 from constants import PARENTS, PROBABILITIES
 from utils import indent, quicksort
 
-class Node():
+class Node:
     """Used for storing a representation of bayesian network node"""
 
     def __init__(self, parents=[], probabilities=[]):
@@ -45,7 +45,9 @@ class Node():
         """Returns number of distinct child values across
         the probabilities list."""
         distinct_children = []
+        print(self.probabilities)
         for p in self.probabilities:
+            print(p)
             if p.child not in distinct_children:
                 distinct_children.append(p)
         return len(distinct_children)
