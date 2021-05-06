@@ -91,7 +91,7 @@ def check_json(data, required):
 def indent(n=1, indent=INDENT):
     """Returns string defined as n times indentation."""
     msg = ''
-    for i in n:
+    for i in range(n):
         msg += indent
     return msg
 
