@@ -64,6 +64,8 @@ class Node:
         for p in self.probabilities:
             if not p.validate():
                 return False
+            sum_iter += 1
+            p_sum += p.probability
             if sum_iter == n_distinct_children:
                 if p_sum != 1:
                     print('In', p.parents, 'total probability exceeds 1.0.')
@@ -71,8 +73,6 @@ class Node:
                     return False
                 sum_iter = 0
                 p_sum = 0
-            sum_iter += 1
-            p_sum += p.probability
 
         return True
 
