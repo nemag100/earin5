@@ -57,25 +57,26 @@ class Node:
         to False."""
         self.sort()
 
+        msg = ''
+
         sum_iter = 0
         p_sum = 0
         n_distinct_children = self.n_distinct_children()
 
         if not self.probabilities:
-            print('No probabilities assigned.')
-            return False
+            msg += 'No probabilities assigned.'
+            return False, msg
 
         for p in self.probabilities:
             sum_iter += 1
             p_sum += p.probability
             if sum_iter == n_distinct_children:
                 if p_sum != 1:
-                    print('In', p.parents, 'total probability exceeds 1.0.')
-                    print('Total probability:', str(p_sum))
-                    return False
+                    msg += ('In parent probability(-ies) \"' + p.parents
+                        + '\" total probability exceeds 1.0.\n'
+                        + 'Total probability: ' + str(p_sum))
+                    return False, msg
                 sum_iter = 0
                 p_sum = 0
 
-        return True
-
-
+        return True, msg

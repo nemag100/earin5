@@ -10,8 +10,15 @@ class BayesNet:
     def __init__(self):
         self.nodes = {}
 
+    def __str__(self):
+        msg = ''
+        for node in self.nodes.items():
+            msg += '\"' + node[0] + '\" ' + str(node[1])
+        return msg
+
     def load(self, filename):
         self.nodes = self._load_json(filename)
+        self.validate()
 
     def mcmc(self, evidence={}, query=[]):
         """Returns probability estimates for each query,
@@ -24,6 +31,16 @@ class BayesNet:
 
     def markov_blanket(self):
         pass
+
+    def validate(self):
+        if not self.nodes:
+            print('No nodes initialized.')
+            return False
+        for node in self.nodes.values():
+            if not node.validate():
+                self.nodes = {}
+                return False
+        return True
 
     def check_cycles(self):
         """Evaluates to True if the bayesian network graph
@@ -52,8 +69,11 @@ class BayesNet:
                     probability))
             node = Node(parents=parents_table, probabilities=probabilities)
             node.sort()
-            if not node.validate():
+            valid, err_msg = node.validate()
+            if not valid:
                 print('Node \"' + node_name + '\" invalid.')
+                print(err_msg)
+                nodes = {}
                 break
             nodes[node_name] = node
         return nodes
@@ -61,8 +81,7 @@ class BayesNet:
 def main(args):
     bayes_net = BayesNet()
     bayes_net.load(args[0])
-    for node in bayes_net.nodes.items():
-        print('\"' + node[0] + '\" ' + str(node[1]))
+    print(bayes_net)
 
 if __name__ == '__main__':
     import sys
