@@ -23,7 +23,7 @@ class Node:
         for i, probability in enumerate(self.probabilities):
             if i:
                 msg += ','
-                if not (i + 1) % n_distinct_children == 0:
+                if not (i) % n_distinct_children == 0:
                     msg += ' '
                 else:
                     msg += '\n' + indent(n=2)
@@ -66,7 +66,8 @@ class Node:
                 return False
             if sum_iter == n_distinct_children:
                 if p_sum != 1:
-                    print('Total probability exceeds 1.0.')
+                    print('In', p.parents, 'total probability exceeds 1.0.')
+                    print('Total probability:', str(p_sum))
                     return False
                 sum_iter = 0
                 p_sum = 0

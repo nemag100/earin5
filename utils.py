@@ -12,7 +12,10 @@ class ConditionalProbability:
         self.probability = probability
 
     def __str__(self):
-        msg = '\"' + self.parents + ',' + self.child + '\": '
+        msg = '\"'
+        if self.parents:
+            msg += self.parents + ','
+        msg += self.child + '\": '
         msg += str(self.probability)
         return msg
 
@@ -20,16 +23,10 @@ class ConditionalProbability:
         return self.child == other.child and self.parents == other.parents
 
     def __lt__(self, other):
-        if not self.child == other.child:
-            return self.child < other.child
-        else:
-            return self.parents < other.parents
+        return self.parents + self.child < other.parents + other.child
 
     def __gt__(self, other):
-        if not self.child == other.child:
-            return self.child > other.child
-        else:
-            return self.parents > other.parents
+        return self.parents + self.child > other.parents + other.child
 
     def validate(self):
         """Evaluates to True if the probability is defined."""

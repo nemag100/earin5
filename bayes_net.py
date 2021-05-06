@@ -42,7 +42,7 @@ class BayesNet:
         if not check_json(data, REQUIRED_KEYS):
             return nodes
         for node_name in data[NODES]:
-            parents = data[RELATIONS][node_name][PARENTS]
+            parents_table = data[RELATIONS][node_name][PARENTS]
             probability_table = data[RELATIONS][node_name][PROBABILITIES]
             probabilities = []
             for item in probability_table.items():
@@ -50,10 +50,10 @@ class BayesNet:
                 probability = item[1]
                 probabilities.append(ConditionalProbability(parents, child,
                     probability))
-            node = Node(parents=parents, probabilities=probabilities)
-            print(node)
+            node = Node(parents=parents_table, probabilities=probabilities)
+            node.sort()
             if not node.validate():
-                print('Node ', node_name, ' invalid.')
+                print('Node', node_name, 'invalid.')
                 break
             nodes[node_name] = node
         return nodes
@@ -61,8 +61,8 @@ class BayesNet:
 def main(args):
     bayes_net = BayesNet()
     bayes_net.load(args[0])
-    for node in bayes_net.nodes:
-        print(node)
+    for node in bayes_net.nodes.items():
+        print('\"' + node[0] + '\" ' + str(node[1]))
 
 if __name__ == '__main__':
     import sys
