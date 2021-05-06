@@ -52,8 +52,6 @@ class BayesNet:
         unique = lambda them: [n for n in them if n not in res]
         for parent in self.nodes[node].parents: # for all node's parents
             res.append(parent)  # add the parent to res
-            # append res with parent's other children not added yet:
-            res += unique(all_but_me(self.edges[parent]))
         for child in self.edges[node]:  # for all node's children
             res.append(child)   # add the child to res
             # append res with the child's other parents not added yet:
