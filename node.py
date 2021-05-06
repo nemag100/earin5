@@ -1,15 +1,36 @@
-from utils import quicksort
+from constants import PARENTS, PROBABILITIES
+from utils import indent, quicksort
 
-class Node(object):
+class Node():
     """Used for storing a representation of bayesian network node"""
 
-    def __init__(self, name):
-        self.name = name
-        self.parents = []
-        self.probabilities = [] # list of ConditionalProbability objects
+    def __init__(self, parents=[], probabilities=[]):
+        self.parents = parents
+        self.probabilities = probabilities  # list of
+                                            # ConditionalProbability
+                                            # objects
 
-    def __str__(self):  # for easier debugging and visualisation
-        return self.name
+    def __str__(self):
+        n_distinct_children = self.n_distinct_children()
+        msg = '{\n'
+        msg += indent() + '\"' + PARENTS + '\": ['
+        for i, parent in enumerate(self.parents):
+            if i:
+                msg += ','
+            msg += '\"' + parent + '\"'
+        msg += '],\n'
+        msg += indent() + '\"' + PROBABILITIES + '\": {\n' + indent(n=2)
+        for i, probability in enumerate(self.probabilities):
+            if i:
+                msg += ','
+                if not (i + 1) % n_distinct_children == 0:
+                    msg += ' '
+                else:
+                    msg += '\n' + indent(n=2)
+            msg += str(probability)
+        msg += indent() + '\n}'
+        msg += '\n'
+        return msg
 
     def get_probability(self, events):
         """Returns probabilities of given events chain."""
@@ -45,6 +66,7 @@ class Node(object):
                 return False
             if sum_iter == n_distinct_children:
                 if p_sum != 1:
+                    print('Total probability exceeds 1.0.')
                     return False
                 sum_iter = 0
                 p_sum = 0
