@@ -53,7 +53,7 @@ class Node:
 
         sum_iter = 0
         p_sum = 0
-        n_distinct_children = self.n_distinct_children()
+        n_values = len(self.values)
 
         if not self.probabilities:
             msg += 'No probabilities assigned.'
@@ -62,7 +62,7 @@ class Node:
         for p in self.probabilities:
             sum_iter += 1
             p_sum += p.probability
-            if sum_iter == n_distinct_children:
+            if sum_iter == n_values:
                 if p_sum != 1:
                     msg += ('In parent probability(-ies) \"' + p.parents
                         + '\" total probability exceeds 1.0.\n'
