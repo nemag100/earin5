@@ -12,7 +12,7 @@ class Node:
         self.values = values    # list of Node's possible values
 
     def __str__(self):
-        n_distinct_children = self.n_distinct_children()
+        n_values = len(self.values)
         msg = '{\n'
         msg += indent() + '\"' + PARENTS + '\": ['
         for i, parent in enumerate(self.parents):
@@ -24,7 +24,7 @@ class Node:
         for i, probability in enumerate(self.probabilities):
             if i:
                 msg += ','
-                if not (i) % n_distinct_children == 0:
+                if not (i) % n_values == 0:
                     msg += ' '
                 else:
                     msg += '\n' + indent(n=2)
@@ -41,15 +41,6 @@ class Node:
         """Sorts probabilities by their children values, then by their
         parents values, in alphabetical order"""
         self.probabilities = quicksort(self.probabilities)
-
-    def n_distinct_children(self):
-        """Returns number of distinct child values across
-        the probabilities list."""
-        distinct_children = []
-        for p in self.probabilities:
-            if p.child not in distinct_children:
-                distinct_children.append(p.child)
-        return len(distinct_children)
 
     def validate(self):
         """Evaluates to True if the node has defined probabilities
