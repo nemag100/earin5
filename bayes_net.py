@@ -69,9 +69,9 @@ class BayesNet:
         visited = []
         r_stack = []
 
-        def neighbour_cycle(vertex):
-            """Evaluates to True if any visited neighbour is in recursion
-            stack, otherwise evaluates to False."""
+        def neighbour_cycle(vertex):    # inner function of check_cycles
+            """Evaluates to True if any visited neighbour
+            is in recursion stack, otherwise evaluates to False."""
             visited.append(vertex)
             r_stack.append(vertex)
 
@@ -84,7 +84,7 @@ class BayesNet:
             r_stack.remove(vertex)
             return False
 
-        for node in self.edges.keys():
+        for node in self.nodes.keys():
             if node not in visited and neighbour_cycle(node):
                 return True
         return False
