@@ -4,11 +4,12 @@ from utils import indent, quicksort
 class Node:
     """Used for storing a representation of bayesian network node"""
 
-    def __init__(self, parents=[], probabilities=[]):
-        self.parents = parents
-        self.probabilities = probabilities  # list of
-                                            # ConditionalProbability
-                                            # objects
+    def __init__(self, parents=[], probabilities=[], values=[]):
+        self.parents = parents  # list of Node's parents
+        # list of ConditionalProbability objects for conditional
+        # probabilities of events in Node:
+        self.probabilities = probabilities
+        self.values = values    # list of Node's possible values
 
     def __str__(self):
         n_distinct_children = self.n_distinct_children()

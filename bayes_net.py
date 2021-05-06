@@ -122,12 +122,16 @@ class BayesNet:
             parents_table = data[RELATIONS][node_name][PARENTS]
             probability_table = data[RELATIONS][node_name][PROBABILITIES]
             probabilities = []
+            values = []
             for item in probability_table.items():
                 parents, child = split_key(item[0])
                 probability = item[1]
                 probabilities.append(ConditionalProbability(parents, child,
                     probability))
-            node = Node(parents=parents_table, probabilities=probabilities)
+                if child not in values:
+                    values.append(child)
+            node = Node(parents=parents_table, probabilities=probabilities,
+                values=values)
             node.sort()
             valid, err_msg = node.validate()
             if not valid:
