@@ -28,14 +28,6 @@ class ConditionalProbability:
     def __gt__(self, other):
         return self.parents + self.child > other.parents + other.child
 
-    def validate(self):
-        """Evaluates to True if the probability is defined."""
-        if not self.probability:
-            print('Probability undefined for ',
-                self.parents + ',' + self.child)
-            return False
-        return True
-
 def quicksort(array):
     """Sorts the array by means of the the quicksort algorithm."""
 

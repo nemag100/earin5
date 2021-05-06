@@ -61,9 +61,11 @@ class Node:
         p_sum = 0
         n_distinct_children = self.n_distinct_children()
 
+        if not self.probabilities:
+            print('No probabilities assigned.')
+            return False
+
         for p in self.probabilities:
-            if not p.validate():
-                return False
             sum_iter += 1
             p_sum += p.probability
             if sum_iter == n_distinct_children:
