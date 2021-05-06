@@ -58,12 +58,36 @@ class BayesNet:
                 msg += 'Node \"' + node[0] + '\" invalid.'
                 msg += err_msg
                 return False, msg
+        if self.check_cycles():
+            msg += 'Cycles found in graph.'
+            return False, msg
         return True, msg
 
     def check_cycles(self):
         """Evaluates to True if the bayesian network graph
-        contains cycles, otherwise evaluates to False"""
-        pass
+        contains cycles, otherwise evaluates to False."""
+        visited = []
+        r_stack = []
+
+        def neighbour_cycle(vertex):
+            """Evaluates to True if any visited neighbour is in recursion
+            stack, otherwise evaluates to False."""
+            visited.append(vertex)
+            r_stack.append(vertex)
+
+            for neighbour in self.edges[vertex]:
+                if neighbour not in visited and neighbour_cycle(neighbour):
+                    return True
+                elif neighbour in r_stack:
+                    return True
+
+            r_stack.remove(vertex)
+            return False
+
+        for node in self.edges.keys():
+            if node not in visited and neighbour_cycle(node):
+                return True
+        return False
 
     def _connect(self):
         """Updates edges dictionary."""
