@@ -18,7 +18,7 @@ class BayesNet:
         based on provided evidence."""
         answer = ""
         for q in query:
-            for n in nodes:
+            for n in self.nodes:
                 pass
         return answer
 
