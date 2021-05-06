@@ -46,13 +46,17 @@ class BayesNet:
     def markov_blanket(self, node):
         """Returns Markov blanket for a given node."""
         res = []
+        # list of all nodes but node from the list them:
         all_but_me = lambda them: [n for n in them if n != node]
+        # list of all nodes from the list them that are not in res yet:
         unique = lambda them: [n for n in them if n not in res]
-        for parent in self.nodes[node].parents:
-            res.append(parent)
+        for parent in self.nodes[node].parents: # for all node's parents
+            res.append(parent)  # add the parent to res
+            # append res with parent's other children not added yet:
             res += unique(all_but_me(self.edges[parent]))
-        for child in self.edges[node]:
-            res.append(child)
+        for child in self.edges[node]:  # for all node's children
+            res.append(child)   # add the child to res
+            # append res with the child's other parents not added yet:
             res += unique(all_but_me(self.nodes[child].parents))
         return res
 
