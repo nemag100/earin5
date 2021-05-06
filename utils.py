@@ -1,3 +1,10 @@
+import os
+import json
+
+from constants import NODES, RELATIONS, PARENTS, PROBABILITIES, REQUIRED_KEYS
+from constants import INDENT
+from node import Node
+
 class ConditionalProbability():
     """Used for storing atomized key values and corresponding
     probabilities."""
@@ -6,6 +13,11 @@ class ConditionalProbability():
         self.parents = parents
         self.child = child
         self.probability = probability
+
+    def __str__(self):
+        msg = '\"' + self.parents + ',' + self.child + '\": '
+        msg += str(self.probability)
+        return msg
 
     def __eq__(self):
         return self.child == other.child and self.parents == other.parents
@@ -24,7 +36,11 @@ class ConditionalProbability():
 
     def validate(self):
         """Evaluates to True if the probability is defined."""
-        return False if not self.probability else True
+        if not self.probability:
+            print('Probability undefined for ',
+                self.parents + ',' + self.child)
+            return False
+        return True
 
 def quicksort(array):
     """Sorts the array by means of the the quicksort algorithm."""
@@ -56,33 +72,90 @@ def split_key(key):
     parents = key[:-cut]
     return parents, child
 
-def main():
+def check_file(filename):
+    """Checks if file exists and is not empty."""
+    if not os.path.isfile(filename): # file does not exist
+        print("File ", filename, " not found.")
+        return False
+    if os.stat(filename).st_size == 0:   # file is empty
+        print("File ", filename, " is empty.")
+        return False
+    return True
+
+def check_json(data, required):
+    """Checks if the data extracted from JSON file includes all the keys
+    specified in EARIN Exercise 5 requirements."""
+    for r in required:
+        if not data[r]:
+            print('No ', r, ' found.')
+            return False
+    return True
+
+def load_json(filename):
+    """Loads json file into the dictionary of nodes."""
+    nodes = {}
+    if not check_file(filename):
+        return nodes
+    data = None
+    with open(filename, 'r') as file:
+        data = json.load(file)
+        file.close()
+    if not check_json(data, REQUIRED_KEYS):
+        return nodes
+    for node_name in data[NODES]:
+        parents = data[RELATIONS][node_name][PARENTS]
+        probability_table = data[RELATIONS][node_name][PROBABILITIES]
+        probabilities = []
+        for item in probability_table.items():
+            parents, child = split_key(item[0])
+            probability = item[1]
+            probabilities.append(ConditionalProbability(parents, child,
+                probability))
+        node = Node(parents=parents, probabilities=probabilities)
+        if not node.validate():
+            print('Node ', node_name, ' invalid.')
+            break
+        nodes[node_name] = node
+    return nodes
+
+def indent(n=1, indent=INDENT):
+    """Returns string defined as n times indentation."""
+    msg = ''
+    for i in n:
+        msg += indent
+    return msg
+
+def main(args):
     """demo"""
 
-    boolean_values = "T,T,F"
-    color_values = "blue,green,yellow,red,blue"
-    single_value = "single"
+    if args[0] == 'split':
+        boolean_values = "T,T,F"
+        color_values = "blue,green,yellow,red,blue"
+        single_value = "single"
 
-    print(boolean_values)
-    split_booleans = split_key(boolean_values)
-    if not split_booleans[0]:
-        print('>>no parents<<')
-    print(split_booleans[0])
-    print(split_booleans[1])
+        print(boolean_values)
+        split_booleans = split_key(boolean_values)
+        if not split_booleans[0]:
+            print('>>no parents<<')
+        print(split_booleans[0])
+        print(split_booleans[1])
 
-    print(color_values)
-    split_colors = split_key(color_values)
-    if not split_colors[0]:
-        print('>>no parents<<')
-    print(split_colors[0])
-    print(split_colors[1])
+        print(color_values)
+        split_colors = split_key(color_values)
+        if not split_colors[0]:
+            print('>>no parents<<')
+        print(split_colors[0])
+        print(split_colors[1])
 
-    print(single_value)
-    split_single = split_key(single_value)
-    if not split_single[0]:
-        print('>>no parents<<')
-    print(split_single[0])
-    print(split_single[1])
+        print(single_value)
+        split_single = split_key(single_value)
+        if not split_single[0]:
+            print('>>no parents<<')
+        print(split_single[0])
+        print(split_single[1])
+    elif args[0] == 'json':
+        load_json(args[1])
 
 if __name__ == '__main__':
-    main()
+    import sys
+    main(sys.argv[1:])
