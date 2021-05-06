@@ -53,7 +53,7 @@ class BayesNet:
             node = Node(parents=parents_table, probabilities=probabilities)
             node.sort()
             if not node.validate():
-                print('Node', node_name, 'invalid.')
+                print('Node \"' + node_name + '\" invalid.')
                 break
             nodes[node_name] = node
         return nodes
