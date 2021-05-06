@@ -43,8 +43,18 @@ class BayesNet:
                 pass
         return answer
 
-    def markov_blanket(self):
-        pass
+    def markov_blanket(self, node):
+        """Returns Markov blanket for a given node."""
+        res = []
+        all_but_me = lambda them: [n for n in them if n != node]
+        unique = lambda them: [n for n in them if n not in res]
+        for parent in self.nodes[node].parents:
+            res.append(parent)
+            res += unique(all_but_me(self.edges[parent]))
+        for child in self.edges[node]:
+            res.append(child)
+            res += unique(all_but_me(self.nodes[child].parents))
+        return res
 
     def validate(self):
         msg = ''
@@ -130,6 +140,8 @@ def main(args):
     bayes_net = BayesNet()
     bayes_net.load(args[0])
     print(bayes_net)
+    print('Markov blanket for ' + args[1] + ':')
+    print(bayes_net.markov_blanket(args[1]))
 
 if __name__ == '__main__':
     import sys
