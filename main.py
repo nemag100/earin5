@@ -1,4 +1,5 @@
 import sys
+import ast
 import argparse
 from bayes_net import BayesNet
 
@@ -33,8 +34,21 @@ def parse_arguments():
         "-e",
         "--evidence",
         required=False,
-        help='for example: evidence={"burglary":"T", "alarm": "T"}'
-        
+        help='''for example: "{'burglary':'T', 'alarm': 'T'}"'''
+    )
+    
+    ap.add_argument(
+        "-q",
+        "--query",
+        required=False,
+        help='''for example: "['John_calls']"'''
+    )
+    
+    ap.add_argument(
+        "-s",
+        "--steps",
+        required=False,
+        help='for example: -s 123456'
     )
     return vars(ap.parse_args())
 
@@ -130,7 +144,21 @@ if __name__ == '__main__':
     args = parse_arguments()
     bayes_net = create_bayes_net_from_file(args)
     interface = Interface(bayes_net)
+    try:
+        if args['evidence']:
+            print(args['evidence'])
+            interface.evidence = ast.literal_eval(args['evidence'])
+        if args['query']:
+            print(args['query'])
+            interface.query = ast.literal_eval(args['query'])
+        if args['steps']:
+            print(args['steps'])
+            interface.steps = int(args['steps'])
+    except: KeyError
+    
     print_menu()
+    
+    
 
     while(True):
 
