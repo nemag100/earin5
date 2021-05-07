@@ -6,7 +6,8 @@ from random import choice
 
 from constants import NODES, RELATIONS, PARENTS, PROBABILITIES, REQUIRED_KEYS
 from node import Node
-from utils import check_file, check_json, split_key, ConditionalProbability
+from utils import check_file, check_json, split_key, quicksort
+from utils import ConditionalProbability
 
 class BayesNet:
     """Used for storing a bayesian network representation."""
@@ -42,15 +43,19 @@ class BayesNet:
         # list of all nodes for whom there no evidence was provided:
         unknown = [n for n in self.nodes.keys() if n not in evidence.keys()]
         values_of_interest = lambda q: [v for v in self.nodes[q].values]
+        for u in unknown:
+            evidence[u] = self.random(u)
+        # Set the counters for variables of interest:
         counters = {}
         for q in query:
             counters[q] = dict.fromkeys(values_of_interest(q), 0.0)
-        for u in unknown:
-            evidence[u] = self.random(u)
+        # Random walking:
         for s in range(steps):
-            x = choice(query)
+            x = choice(unknown) # Draw a node not belonging to evidence
             evidence[x] = self.mb_sampling(x, evidence)
-            counters[x][evidence[x]] += 1
+            for q in query:
+                counters[q][evidence[q]] += 1
+        # Normalize counters to get a probability distribution:
         s = dict.fromkeys(counters.keys(), 0.0)
         for c, v in counters.items():
             for p in v.values():
@@ -78,7 +83,7 @@ class BayesNet:
     def mb_sampling(self, node, evidence):
         """Returns probability sampled with conditioning on Markov
         blanket."""
-        values = self.nodes[node].values
+        values = quicksort(self.nodes[node].values)
         probabilities = dict.fromkeys(values)
         for value in values:
             probabilities[value] = self.p_value(node, evidence, value)
@@ -209,21 +214,67 @@ class BayesNet:
         return nodes
 
 def main(args):
+    steps = int(args[2]) if len(args) == 3 else 1000
     bayes_net = BayesNet()
     bayes_net.load(args[0])
     print(bayes_net)
     print('Markov blanket for ' + args[1] + ':')
     print(bayes_net.markov_blanket(args[1]))
     print()
-    print('Probability of John_calls under condition that burglary is true:')
-    answer = bayes_net.mcmc(evidence={"burglary":"T"}, query=["John_calls"])
-    print(answer)
-    print()
-    print('Probability of earthquake under condition that burglary is true'
-        + ' and alarm is true:')
-    answer = bayes_net.mcmc(evidence={"burglary":"T", "alarm":"T"},
-        query=["earthquake"])
-    print(answer)
+    if args[0] == "alarm.json":
+        print('Probability of John_calls under condition'
+            + ' that burglary is true:')
+        answer = bayes_net.mcmc(evidence={"burglary":"T"},
+            query=["John_calls"], steps=steps)
+        print(answer)
+        print()
+        print('Probability of earthquake under condition that burglary is true'
+            + ' and alarm is true:')
+        answer = bayes_net.mcmc(evidence={"burglary":"T", "alarm":"T"},
+            query=["earthquake"], steps=steps)
+        print(answer)
+
+        err_cnt = 0
+        for i in range(1000):
+            answer = bayes_net.mcmc(evidence={"burglary":"T"},
+                query=["John_calls"], steps=steps)
+            j = answer["John_calls"]
+            if j["T"] < j["F"]:
+                err_cnt += 1
+            if i != 0 and i % 10 == 0:
+                print(i)
+        print("Errors", err_cnt)
+
+    elif args[0] == "flower.json" or args[0] == "f2.json":
+        print('Probability of flower_species under condition'
+            + ' that color is red:')
+        answer = bayes_net.mcmc(evidence={"color":"red"},
+            query=["flower_species"], steps=steps)
+        print(answer)
+        print()
+        print('Probability of flower_species under condition'
+            + ' that color is blue:')
+        answer = bayes_net.mcmc(evidence={"color":"blue"},
+            query=["flower_species"], steps=steps)
+        print(answer)
+        print()
+        print('Probability of color under condition'
+            + ' that flower_species is rose:')
+        answer = bayes_net.mcmc(evidence={"flower_species":"rose"},
+            query=["color"], steps=steps)
+        print(answer)
+        print()
+        print('Probability of color under condition'
+            + ' that flower_species is tulip:')
+        answer = bayes_net.mcmc(evidence={"flower_species":"tulip"},
+            query=["color"], steps=steps)
+        print(answer)
+        print()
+        print('Probability of color under condition'
+            + ' that flower_species is iris:')
+        answer = bayes_net.mcmc(evidence={"flower_species":"iris"},
+            query=["color"], steps=steps)
+        print(answer)
 
 if __name__ == '__main__':
     import sys
