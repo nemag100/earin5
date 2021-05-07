@@ -1,4 +1,5 @@
 import sys
+import copy
 import argparse
 from bayes_net import BayesNet
 
@@ -10,9 +11,9 @@ class Interface:
         self.steps = 1000
         self.bayes_net = bayes_net
 
-def create_bayes_net_from_file(args):  
-    bayes_net = BayesNet()  
-    
+def create_bayes_net_from_file(args):
+    bayes_net = BayesNet()
+
     if bayes_net.load(args['file']):
         print("File loaded successfully.")
         return bayes_net
@@ -22,7 +23,7 @@ def create_bayes_net_from_file(args):
 
 def parse_arguments():
     ap = argparse.ArgumentParser()
-    
+
     ap.add_argument(
         "-f",
         "--file",
@@ -53,13 +54,13 @@ def get_user_input():
 def markov(variable, interface):
     print("markov blanket for", variable, ":")
     print(interface.bayes_net.markov_blanket(variable))
-    
+
 def print_evidence(interface):
-    print(interface.evidence)    
+    print(interface.evidence)
 
 def evidence(name, value, interface):
     interface.evidence[name] = value
-    
+
 def remove_evidence(name, interface):
     del interface.evidence[name]
 
@@ -80,10 +81,10 @@ def help(interface):
 
 def mcmc(interface):
     MCMC(interface)
-    
+
 def MCMC(interface):
     answer = interface.bayes_net.mcmc(
-        evidence=interface.evidence,
+        evidence=copy.copy(interface.evidence),
         query=interface.query,
         steps=interface.steps
         )
@@ -95,20 +96,20 @@ def MCMC(interface):
 def call_selected_function(user_input, interface):
     try:
         globals()[user_input[0]](*user_input[1:], interface)
-        
+
     except TypeError as error_message:
         print("Something went wrong: ", error_message)
     except SystemExit:
         sys.exit(0)
     except KeyError as error_message:
         print("Key not found!", error_message)
-    except: 
+    except:
         print("Unexpected error: ", sys.exc_info()[0])
     else:
         print("Command accepted.")
-        
-        
-        
+
+
+
 
 if __name__ == '__main__':
 
@@ -116,9 +117,9 @@ if __name__ == '__main__':
     bayes_net = create_bayes_net_from_file(args)
     interface = Interface(bayes_net)
     print_menu()
-    
+
     while(True):
-        
+
         user_input = get_user_input()
         options = ["markov",
                    "evidence",
@@ -131,17 +132,16 @@ if __name__ == '__main__':
                    "MCMC",
                    "exit",
                    "help"]
-        
+
         if user_input[0] is not None and user_input[0] in options:
            # if check_arguments(user_input):
                 call_selected_function(user_input, interface)
         else:
             print("Wrong input")
-        
-        
-        
-        
-       
-        
-       
-    
+
+
+
+
+
+
+
