@@ -1,17 +1,17 @@
 {
-"nodes" : ["flower_species", "color"],
-"relations": {
-"flower_species": {
-"parents": [],
-"probabilities": { "rose": 0.30, "iris": 0.30, "tulip": 0.40}
-},
-"color": {
-"parents": ["flower_species"],
-"probabilities": {
-"rose,red": 0.90, "rose,blue": 0.10,
-"iris,red": 0.30, "iris,blue": 0.70,
-"tulip,red": 0.60, "tulip,blue": 0.40
-}
-}
-}
+    "nodes" : ["flower_species", "color"],
+    "relations": {
+        "flower_species": {
+            "parents": [],
+            "probabilities": { "rose": 0.30, "iris": 0.30, "tulip": 0.40}
+        },
+        "color": {
+            "parents": ["flower_species"],
+            "probabilities": {
+                "rose,red": 0.90, "rose,blue": 0.10,
+                "iris,red": 0.30, "iris,blue": 0.70,
+                "tulip,red": 0.60, "tulip,blue": 0.40
+          }
+        }
+    }
 }
