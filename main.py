@@ -81,6 +81,8 @@ def print_evidence(interface):
     print(interface.evidence)
 
 def evidence(name, value, interface):
+    if name not in interface.bayes_net.nodes.keys():
+        raise ValueError(name, "is not a valid evidence node")
     interface.evidence[name] = value
 
 def remove_evidence(name, interface):
@@ -131,6 +133,8 @@ def call_selected_function(user_input, interface):
         sys.exit(0)
     except KeyError as error_message:
         print("Key not found!", error_message)
+    except ValueError as error_message:
+        print("Wrong value!", error_message)
     except:
         print("Unexpected error: ", sys.exc_info()[0])
     else:
@@ -146,17 +150,22 @@ if __name__ == '__main__':
     interface = Interface(bayes_net)
     try:
         if args['evidence']:
-            print(args['evidence'])
+            print("evidence=",args['evidence'])
             interface.evidence = ast.literal_eval(args['evidence'])
         if args['query']:
-            print(args['query'])
+            print("query=",args['query'])
             interface.query = ast.literal_eval(args['query'])
         if args['steps']:
-            print(args['steps'])
+            print("steps=",args['steps'])
+            print()
             interface.steps = int(args['steps'])
+        mcmc(interface)
     except: KeyError
     
-    print_menu()
+    if len(args) > 1:
+        sys.exit(0)
+    else:
+        print_menu()
     
     
 
