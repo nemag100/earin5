@@ -1,3 +1,4 @@
+import random
 from random import choice
 
 from constants import PARENTS, PROBABILITIES
@@ -41,12 +42,30 @@ class Node:
     def random(self):
         """Returns value drawn from self.values."""
         return choice(self.values)
+        #return self._r()
+
+    def _r(self):
+        s = 0.0
+        totals = dict.fromkeys(self.values, 0.0)
+        for p in self.probabilities:
+            totals[p.child] += p.probability
+            s += p.probability
+        for k in totals.keys():
+            totals[k] /= s
+
+        random_value = random.random()
+        total = 0.0
+        for value, probability in totals.items():
+            total += probability
+            if random_value <= total:
+                return value
+
 
     def sort(self):
         """Sorts probabilities by their children values, then by their
         parents values, in alphabetical order"""
         self.probabilities = quicksort(self.probabilities)
-        self.values = quicksort(self.values)
+        #self.values = quicksort(self.values)
 
     def validate(self):
         """Evaluates to True if the node has defined probabilities

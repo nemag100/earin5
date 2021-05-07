@@ -1,3 +1,4 @@
+import copy
 import json
 import random
 
@@ -101,13 +102,18 @@ class BayesNet:
             if random_value <= total:
                 return value
 
-    def p_value(self, node, evidence, value):
+    def p_value(self, node, ev, value):
         """Returns probability for node to take given value."""
         # P(X=x_j|Parents(X)):
+        evidence = copy.copy(ev)
+        evidence[node] = value
         res = self.p_conditional(node, evidence, value)
+        #print('value:', value)
         # PI_(Z in Children(X))(P(Z=z_i|Parents(Z))):
         for c in self.edges[node]:
             res *= self.p_conditional(c, evidence, evidence[c])
+            #print('=', c, evidence[c], res)
+            #print()
         return res
 
     def p_conditional(self, node, evidence, value):
@@ -119,12 +125,14 @@ class BayesNet:
         for i, p in enumerate(self.nodes[node].parents):
             if i:
                 e_parents += ','
+            #print('    ', evidence[p])
             e_parents += evidence[p]
         c1 = lambda p: p.parents == e_parents
         c2 = lambda p: p.child == value
         for p in self.nodes[node].probabilities:
             if c1(p) and c2(p):
                 p_x_c_parents = p.probability
+                #print(node, value, p.probability)
         return p_x_c_parents
 
     def validate(self):
@@ -236,22 +244,31 @@ def main(args):
             query=["earthquake"], steps=steps)
         print(answer)
 
+        """
+        jt, jf, et, ef, = 0.0, 0.0, 0.0, 0.0
         print("\nLooking for errors...")
         err_cnt = 0
         for i in range(1000):
             answer = bayes_net.mcmc(evidence={"burglary":"T"},
                 query=["John_calls"], steps=steps)
             j = answer["John_calls"]
+            jt += j["T"]
+            jf += j["F"]
             if j["T"] < j["F"]:
                 err_cnt += 1
             answer = bayes_net.mcmc(evidence={"burglary":"T", "alarm":"T"},
                 query=["earthquake"], steps=steps)
             e = answer["earthquake"]
+            et += e["T"]
+            ef += e["F"]
             if e["T"] > e["F"]:
                 err_cnt += 1
             if i != 0 and i % 100 == 0:
                 print(i, '/ 1000')
+        print('jt:', jt/1000, 'jf:', jf/1000)
+        print('et:', et/1000, 'ef:', ef/1000)
         print("Errors", err_cnt)
+        """
 
     elif args[0] == "flower.json" or args[0] == "f2.json":
         print('Probability of flower_species under condition'
