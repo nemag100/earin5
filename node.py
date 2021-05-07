@@ -31,8 +31,7 @@ class Node:
                 else:
                     msg += '\n' + indent(n=2)
             msg += str(probability)
-        msg += indent() + '\n}'
-        msg += '\n'
+        msg += '\n' + indent() + '}\n}\n'
         return msg
 
     def get_probability(self, events):
