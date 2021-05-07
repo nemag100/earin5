@@ -43,6 +43,7 @@ def print_menu():
             '\tnetwork                     = prints the network loaded from file\n'
             '\tMCMC or mcmc                = mcmc using evidence, query, steps\n'
             '\texit                        = exits the program\n'
+            '\thelp                        = displays this message\n'
         )
     print(menu)
 
@@ -73,6 +74,9 @@ def network(interface):
 
 def exit(interface):
     sys.exit(0)
+
+def help(interface):
+    print_menu()
 
 def mcmc(interface):
     MCMC(interface)
@@ -111,9 +115,10 @@ if __name__ == '__main__':
     args = parse_arguments()
     bayes_net = create_bayes_net_from_file(args)
     interface = Interface(bayes_net)
+    print_menu()
     
     while(True):
-        print_menu()
+        
         user_input = get_user_input()
         options = ["markov",
                    "evidence",
@@ -124,7 +129,8 @@ if __name__ == '__main__':
                    "network",
                    "mcmc",
                    "MCMC",
-                   "exit"]
+                   "exit",
+                   "help"]
         
         if user_input[0] is not None and user_input[0] in options:
            # if check_arguments(user_input):
