@@ -71,7 +71,7 @@ class Node:
             if sum_iter == n_values:
                 if p_sum != 1:
                     msg += ('In parent probability(-ies) \"' + p.parents
-                        + '\" total probability exceeds 1.0.\n'
+                        + '\" total probability is not 1.0.\n'
                         + 'Total probability: ' + str(p_sum))
                     return False, msg
                 sum_iter = 0
