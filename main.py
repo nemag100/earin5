@@ -38,7 +38,7 @@ def print_menu():
     menu = (
             'Available commands:\n'
             '\tmarkov <variable_name>      = print Markov blanket\n'
-            '\tevidence <name> <T|F>       = add evidence true or false\n'
+            '\tevidence <name> <value>     = add evidence with value\n'
             '\tremove_evidence <name>      = remove evidence\n'
             '\tprint_evidence              = shows currently added evidence\n'
             '\tquery <name>                = return probability distribution\n'
