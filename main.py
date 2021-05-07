@@ -39,12 +39,13 @@ def print_menu():
             'Available commands:\n'
             '\tmarkov <variable_name>      = print Markov blanket\n'
             '\tevidence <name> <T|F>       = add evidence true or false\n'
-            '\tprint_evidence              = shows currently added evidence'
+            '\tremove_evidence <name>      = remove evidence\n'
+            '\tprint_evidence              = shows currently added evidence\n'
             '\tquery <name>                = return probability distribution\n'
             '\tsteps <number>              = sets number of steps, default 1000\n'
             '\tnetwork                     = prints the network loaded from file\n'
-            '\tMCMC or mcmc                = mcmc using evidence, query, steps'
-            '\texit                        = exits the program'
+            '\tMCMC or mcmc                = mcmc using evidence, query, steps\n'
+            '\texit                        = exits the program\n'
         )
     print(menu)
 
@@ -60,6 +61,9 @@ def print_evidence(interface):
 
 def evidence(name, value, interface):
     interface.evidence[name] = value
+    
+def remove_evidence(name, interface):
+    del interface.evidence[name]
 
 def query(name, interface):
     interface.query.append(name)
@@ -83,7 +87,7 @@ def MCMC(interface):
         steps=interface.steps
         )
     print("The probability of:", interface.query)
-    print("Given that that:", interface.evidence)
+    print("Given that:", interface.evidence)
     print("Obtained in", interface.steps, "steps is:")
     print(answer)
 
@@ -98,7 +102,7 @@ def call_selected_function(user_input, interface):
         print("Key not found!", error_message)
     except: 
         print("Unexpected error: ", sys.exc_info()[0])
-    finally:
+    else:
         print("Command accepted.")
 
 if __name__ == '__main__':
@@ -113,6 +117,7 @@ if __name__ == '__main__':
         options = ["markov",
                    "evidence",
                    "print_evidence",
+                   "remove_evidence",
                    "query",
                    "steps",
                    "network",
