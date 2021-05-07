@@ -47,6 +47,7 @@ class Node:
         """Sorts probabilities by their children values, then by their
         parents values, in alphabetical order"""
         self.probabilities = quicksort(self.probabilities)
+        self.values = quicksort(self.values)
 
     def validate(self):
         """Evaluates to True if the node has defined probabilities
