@@ -29,6 +29,13 @@ def parse_arguments():
         required=True,
         help="json file containing byesian network description"
     )
+    ap.add_argument(
+        "-e",
+        "--evidence",
+        required=False,
+        help='for example: evidence={"burglary":"T", "alarm": "T"}'
+        
+    )
     return vars(ap.parse_args())
 
 def print_menu():
@@ -39,6 +46,8 @@ def print_menu():
             '\tremove_evidence <name>      = remove evidence\n'
             '\tprint_evidence              = shows currently added evidence\n'
             '\tquery <name>                = return probability distribution\n'
+            '\tprint_query                 = prints query\n'
+            '\tremove_query <name>         = removes query with given name\n'
             '\tsteps <number>              = sets number of steps, default 1000\n'
             '\tnetwork                     = prints the network loaded from file\n'
             '\tMCMC or mcmc                = mcmc using evidence, query, steps\n'
@@ -65,7 +74,13 @@ def remove_evidence(name, interface):
 
 def query(name, interface):
     interface.query.append(name)
-
+    
+def remove_query(name, interface):
+    interface.query.remove(name)
+    
+def print_query(interface):
+    print(interface.query)
+    
 def steps(number_of_steps, interface):
     interface.steps = int(number_of_steps)
 
@@ -130,6 +145,8 @@ if __name__ == '__main__':
                    "mcmc",
                    "MCMC",
                    "exit",
+                   "remove_query",
+                   "print_query",
                    "help"]
 
         if user_input[0] is not None and user_input[0] in options:
