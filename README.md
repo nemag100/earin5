@@ -20,3 +20,9 @@ Given that: {'burglary': 'T', 'alarm': 'T'}
 Obtained in 10000 steps is:
 {'earthquake': {'T': 0.0233, 'F': 0.9767}}
 ```
+
+For help, type:
+
+```console
+python main.py --help
+```
