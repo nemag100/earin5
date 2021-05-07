@@ -1,3 +1,5 @@
+from random import choice
+
 from constants import PARENTS, PROBABILITIES
 from utils import indent, quicksort
 
@@ -36,6 +38,10 @@ class Node:
     def get_probability(self, events):
         """Returns probabilities of given events chain."""
         return self.probabilities[events]
+
+    def random(self):
+        """Returns value drawn from self.values."""
+        return choice(self.values)
 
     def sort(self):
         """Sorts probabilities by their children values, then by their

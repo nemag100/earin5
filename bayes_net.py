@@ -1,6 +1,8 @@
 import json
+import random
 
 from collections import defaultdict
+from random import choice
 
 from constants import NODES, RELATIONS, PARENTS, PROBABILITIES, REQUIRED_KEYS
 from node import Node
@@ -34,14 +36,29 @@ class BayesNet:
             print('BayesNet invalid.')
             print(err_msg)
 
-    def mcmc(self, evidence={}, query=[]):
+    def mcmc(self, evidence={}, query=[], steps=1000):
         """Returns probability estimates for each query,
         based on provided evidence."""
-        answer = ""
+        # list of all nodes for whom there no evidence was provided:
+        unknown = [n for n in self.nodes.keys() if n not in evidence.keys()]
+        values_of_interest = lambda q: [v for v in self.nodes[q].values]
+        counters = {}
         for q in query:
-            for n in self.nodes:
-                pass
-        return answer
+            counters[q] = dict.fromkeys(values_of_interest(q), 0.0)
+        for u in unknown:
+            evidence[u] = self.random(u)
+        for s in range(steps):
+            x = choice(query)
+            evidence[x] = self.mb_sampling(x, evidence)
+            counters[x][evidence[x]] += 1
+        s = dict.fromkeys(counters.keys(), 0.0)
+        for c, v in counters.items():
+            for p in v.values():
+                s[c] += p
+        for c, v in counters.items():
+            for k in v.keys():
+                counters[c][k] /= s[c]
+        return counters
 
     def markov_blanket(self, node):
         """Returns Markov blanket for a given node."""
@@ -57,6 +74,51 @@ class BayesNet:
             # append res with the child's other parents not added yet:
             res += unique(all_but_me(self.nodes[child].parents))
         return res
+
+    def mb_sampling(self, node, evidence):
+        """Returns probability sampled with conditioning on Markov
+        blanket."""
+        values = self.nodes[node].values
+        probabilities = dict.fromkeys(values)
+        for value in values:
+            probabilities[value] = self.p_value(node, evidence, value)
+        s = 0.0
+        for value in values:
+            s += probabilities[value]
+        for value in values:
+            probabilities[value] /= s
+        random_value = random.random()
+        total = 0.0
+        for value, probability in probabilities.items():
+            total += probability
+            if random_value <= total:
+                return value
+
+    def p_value(self, node, evidence, value):
+        """Returns probability for node to take given value."""
+        # P(X=x_j|Parents(X)):
+        res = self.p_conditional(node, evidence, value)
+        # PI_(Z in Children(X))(P(Z=z_i|Parents(Z))):
+        for c in self.edges[node]:
+            res *= self.p_conditional(c, evidence, evidence[c])
+        return res
+
+    def p_conditional(self, node, evidence, value):
+        """Returns conditional probability of node taking its value
+        from the evidence list, under condition of parents taking
+        values from that list."""
+        p_x_c_parents = 0.0 # P(X=x_j|Parents(X))
+        e_parents = ''  # evidence for node's parents
+        for i, p in enumerate(self.nodes[node].parents):
+            if i:
+                e_parents += ','
+            e_parents += evidence[p]
+        c1 = lambda p: p.parents == e_parents
+        c2 = lambda p: p.child == value
+        for p in self.nodes[node].probabilities:
+            if c1(p) and c2(p):
+                p_x_c_parents = p.probability
+        return p_x_c_parents
 
     def validate(self):
         msg = ''
@@ -100,6 +162,10 @@ class BayesNet:
             if node not in visited and neighbour_cycle(node):
                 return True
         return False
+
+    def random(self, node):
+        """Returns value drawn from node's values."""
+        return self.nodes[node].random()
 
     def _connect(self):
         """Updates edges dictionary."""
@@ -148,6 +214,16 @@ def main(args):
     print(bayes_net)
     print('Markov blanket for ' + args[1] + ':')
     print(bayes_net.markov_blanket(args[1]))
+    print()
+    print('Probability of John_calls under condition that burglary is true:')
+    answer = bayes_net.mcmc(evidence={"burglary":"T"}, query=["John_calls"])
+    print(answer)
+    print()
+    print('Probability of earthquake under condition that burglary is true'
+        + ' and alarm is true:')
+    answer = bayes_net.mcmc(evidence={"burglary":"T", "alarm":"T"},
+        query=["earthquake"])
+    print(answer)
 
 if __name__ == '__main__':
     import sys
