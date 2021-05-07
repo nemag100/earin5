@@ -150,13 +150,13 @@ if __name__ == '__main__':
     interface = Interface(bayes_net)
     try:
         if args['evidence']:
-            print("evidence=",args['evidence'])
+            print("evidence =",args['evidence'])
             interface.evidence = ast.literal_eval(args['evidence'])
         if args['query']:
-            print("query=",args['query'])
+            print("query =",args['query'])
             interface.query = ast.literal_eval(args['query'])
         if args['steps']:
-            print("steps=",args['steps'])
+            print("steps =",args['steps'])
             print()
             interface.steps = int(args['steps'])
         mcmc(interface)
