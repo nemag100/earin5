@@ -50,6 +50,14 @@ def parse_arguments():
         required=False,
         help='for example: -s 123456'
     )
+    
+    ap.add_argument(
+        "-i",
+        "--interactive",
+        required=False,
+        help='toggle interactive mode',
+        action='store_true'
+    )
     return vars(ap.parse_args())
 
 def print_menu():
@@ -148,21 +156,28 @@ if __name__ == '__main__':
     args = parse_arguments()
     bayes_net = create_bayes_net_from_file(args)
     interface = Interface(bayes_net)
+    interactive_mode = False
     try:
         if args['evidence']:
-            print("evidence =",args['evidence'])
-            interface.evidence = ast.literal_eval(args['evidence'])
+            evidences = ast.literal_eval(args['evidence'])
+            print("evidence = ",evidences)
+            for key, value in evidences.items():
+                call_selected_function(['evidence',key, value], interface)
         if args['query']:
             print("query =",args['query'])
-            interface.query = ast.literal_eval(args['query'])
+            queries = ast.literal_eval(args['query'])
+            for q in queries:
+                call_selected_function(['query', q], interface)
         if args['steps']:
             print("steps =",args['steps'])
-            print()
-            interface.steps = int(args['steps'])
+            call_selected_function(['steps', args['steps']], interface)
         mcmc(interface)
+        
+        if args['interactive']:
+            interactive_mode = True
     except: KeyError
     
-    if len(args) > 1:
+    if interactive_mode == False:
         sys.exit(0)
     else:
         print_menu()
