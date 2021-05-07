@@ -1,5 +1,4 @@
 import sys
-import copy
 import argparse
 from bayes_net import BayesNet
 
@@ -84,7 +83,7 @@ def mcmc(interface):
 
 def MCMC(interface):
     answer = interface.bayes_net.mcmc(
-        evidence=copy.copy(interface.evidence),
+        ev=interface.evidence,
         query=interface.query,
         steps=interface.steps
         )

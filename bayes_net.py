@@ -40,9 +40,10 @@ class BayesNet:
             return False
         return True
 
-    def mcmc(self, evidence={}, query=[], steps=1000):
+    def mcmc(self, ev={}, query=[], steps=1000):
         """Returns probability estimates for each query,
         based on provided evidence."""
+        evidence = copy.copy(ev)
         # list of all nodes for whom there no evidence was provided:
         unknown = [n for n in self.nodes.keys() if n not in evidence.keys()]
         for u in unknown:
