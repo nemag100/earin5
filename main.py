@@ -3,14 +3,14 @@ import argparse
 from bayes_net import BayesNet
 
 class Interface:
+    '''Container for user input data'''
     def __init__(self, bayes_net):
         self.evidence = {}
         self.query = []
         self.steps = 1000
         self.bayes_net = bayes_net
 
-def create_bayes_net_from_file(args):
-    
+def create_bayes_net_from_file(args):  
     bayes_net = BayesNet()  
     
     if bayes_net.load(args['file']):
@@ -29,10 +29,7 @@ def parse_arguments():
         required=True,
         help="json file containing byesian network description"
     )
-    
     return vars(ap.parse_args())
-
-
 
 def print_menu():
     menu = (
@@ -69,7 +66,7 @@ def query(name, interface):
     interface.query.append(name)
 
 def steps(number_of_steps, interface):
-    interface.steps = number_of_steps
+    interface.steps = int(number_of_steps)
 
 def network(interface):
     print(interface.bayes_net)
@@ -94,6 +91,7 @@ def MCMC(interface):
 def call_selected_function(user_input, interface):
     try:
         globals()[user_input[0]](*user_input[1:], interface)
+        
     except TypeError as error_message:
         print("Something went wrong: ", error_message)
     except SystemExit:
@@ -104,6 +102,9 @@ def call_selected_function(user_input, interface):
         print("Unexpected error: ", sys.exc_info()[0])
     else:
         print("Command accepted.")
+        
+        
+        
 
 if __name__ == '__main__':
 
