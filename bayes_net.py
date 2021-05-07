@@ -244,6 +244,11 @@ def main(args):
             j = answer["John_calls"]
             if j["T"] < j["F"]:
                 err_cnt += 1
+            answer = bayes_net.mcmc(evidence={"burglary":"T", "alarm":"T"},
+                query=["earthquake"], steps=steps)
+            e = answer["earthquake"]
+            if e["T"] > e["F"]:
+                err_cnt += 1
             if i != 0 and i % 100 == 0:
                 print(i, '/ 1000')
         print("Errors", err_cnt)
