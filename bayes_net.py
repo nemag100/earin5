@@ -36,6 +36,8 @@ class BayesNet:
         if not valid:
             print('BayesNet invalid.')
             print(err_msg)
+            return False
+        return True
 
     def mcmc(self, evidence={}, query=[], steps=1000):
         """Returns probability estimates for each query,
