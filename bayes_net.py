@@ -44,11 +44,11 @@ class BayesNet:
         based on provided evidence."""
         # list of all nodes for whom there no evidence was provided:
         unknown = [n for n in self.nodes.keys() if n not in evidence.keys()]
-        values_of_interest = lambda q: [v for v in self.nodes[q].values]
         for u in unknown:
             evidence[u] = self.random(u)
         # Set the counters for variables of interest:
         counters = {}
+        values_of_interest = lambda q: [v for v in self.nodes[q].values]
         for q in query:
             counters[q] = dict.fromkeys(values_of_interest(q), 0.0)
         # Random walking:
