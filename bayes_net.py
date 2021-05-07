@@ -234,6 +234,7 @@ def main(args):
             query=["earthquake"], steps=steps)
         print(answer)
 
+        print("\nLooking for errors...")
         err_cnt = 0
         for i in range(1000):
             answer = bayes_net.mcmc(evidence={"burglary":"T"},
@@ -241,8 +242,8 @@ def main(args):
             j = answer["John_calls"]
             if j["T"] < j["F"]:
                 err_cnt += 1
-            if i != 0 and i % 10 == 0:
-                print(i)
+            if i != 0 and i % 100 == 0:
+                print(i, '/ 1000')
         print("Errors", err_cnt)
 
     elif args[0] == "flower.json" or args[0] == "f2.json":
