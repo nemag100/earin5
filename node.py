@@ -4,6 +4,7 @@ from random import choice
 from constants import PARENTS, PROBABILITIES
 from utils import indent, quicksort
 
+
 class Node:
     """Used for storing a representation of bayesian network node"""
 
@@ -42,7 +43,6 @@ class Node:
     def random(self):
         """Returns value drawn from self.values."""
         return choice(self.values)
-        #return self._r()
 
     def _r(self):
         s = 0.0
@@ -60,12 +60,10 @@ class Node:
             if random_value <= total:
                 return value
 
-
     def sort(self):
         """Sorts probabilities by their children values, then by their
         parents values, in alphabetical order"""
         self.probabilities = quicksort(self.probabilities)
-        #self.values = quicksort(self.values)
 
     def validate(self):
         """Evaluates to True if the node has defined probabilities
@@ -90,8 +88,8 @@ class Node:
             if sum_iter == n_values:
                 if p_sum != 1:
                     msg += ('In parent probability(-ies) \"' + p.parents
-                        + '\" total probability is not 1.0.\n'
-                        + 'Total probability: ' + str(p_sum))
+                            + '\" total probability is not 1.0.\n'
+                            + 'Total probability: ' + str(p_sum))
                     return False, msg
                 sum_iter = 0
                 p_sum = 0
