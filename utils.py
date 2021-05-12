@@ -2,6 +2,7 @@ import os
 
 from constants import INDENT
 
+
 class ConditionalProbability:
     """Used for storing atomized key values and corresponding
     probabilities."""
@@ -28,6 +29,7 @@ class ConditionalProbability:
     def __gt__(self, other):
         return self.parents + self.child > other.parents + other.child
 
+
 def quicksort(array):
     """Sorts the array by means of the the quicksort algorithm."""
 
@@ -47,6 +49,7 @@ def quicksort(array):
         return quicksort(less) + equal + quicksort(greater)
     return array
 
+
 def split_key(key):
     """Splits the key of probabilities dictionary according to notation
     proposed in EARIN Exercise 5. Returned values:
@@ -58,15 +61,17 @@ def split_key(key):
     parents = key[:-cut]
     return parents, child
 
+
 def check_file(filename):
     """Checks if file exists and is not empty."""
-    if not os.path.isfile(filename): # file does not exist
+    if not os.path.isfile(filename):    # file does not exist
         print("File ", filename, " not found.")
         return False
     if os.stat(filename).st_size == 0:   # file is empty
         print("File ", filename, " is empty.")
         return False
     return True
+
 
 def check_json(data, required):
     """Checks if the data extracted from JSON file includes all the keys
@@ -77,12 +82,14 @@ def check_json(data, required):
             return False
     return True
 
+
 def indent(n=1, indent=INDENT):
     """Returns string defined as n times indentation."""
     msg = ''
     for i in range(n):
         msg += indent
     return msg
+
 
 def main(args):
     """demo"""
@@ -112,6 +119,7 @@ def main(args):
             print('>>no parents<<')
         print(split_single[0])
         print(split_single[1])
+
 
 if __name__ == '__main__':
     import sys

@@ -10,6 +10,7 @@ from node import Node
 from utils import check_file, check_json, split_key, quicksort
 from utils import ConditionalProbability
 
+
 class BayesNet:
     """Used for storing a bayesian network representation."""
 
@@ -76,7 +77,7 @@ class BayesNet:
         all_but_me = lambda them: [n for n in them if n != node]
         # list of all nodes from the list them that are not in res yet:
         unique = lambda them: [n for n in them if n not in res]
-        for parent in self.nodes[node].parents: # for all node's parents
+        for parent in self.nodes[node].parents:  # for all node's parents
             res.append(parent)  # add the parent to res
         for child in self.edges[node]:  # for all node's children
             res.append(child)   # add the child to res
@@ -109,19 +110,16 @@ class BayesNet:
         evidence = copy.copy(ev)
         evidence[node] = value
         res = self.p_conditional(node, evidence, value)
-        #print('value:', value)
         # PI_(Z in Children(X))(P(Z=z_i|Parents(Z))):
         for c in self.edges[node]:
             res *= self.p_conditional(c, evidence, evidence[c])
-            #print('=', c, evidence[c], res)
-            #print()
         return res
 
     def p_conditional(self, node, evidence, value):
         """Returns conditional probability of node taking its value
         from the evidence list, under condition of parents taking
         values from that list."""
-        p_x_c_parents = 0.0 # P(X=x_j|Parents(X))
+        p_x_c_parents = 0.0  # P(X=x_j|Parents(X))
         e_parents = ''  # evidence for node's parents
         for i, p in enumerate(self.nodes[node].parents):
             if i:
@@ -209,11 +207,11 @@ class BayesNet:
                 parents, child = split_key(item[0])
                 probability = item[1]
                 probabilities.append(ConditionalProbability(parents, child,
-                    probability))
+                                                            probability))
                 if child not in values:
                     values.append(child)
             node = Node(parents=parents_table, probabilities=probabilities,
-                values=values)
+                        values=values)
             node.sort()
             valid, err_msg = node.validate()
             if not valid:
@@ -223,6 +221,7 @@ class BayesNet:
                 break
             nodes[node_name] = node
         return nodes
+
 
 def main(args):
     steps = int(args[2]) if len(args) == 3 else 1000
@@ -234,15 +233,15 @@ def main(args):
     print()
     if args[0] == "alarm.json":
         print('Probability of John_calls under condition'
-            + ' that burglary is true:')
-        answer = bayes_net.mcmc(evidence={"burglary":"T"},
-            query=["John_calls"], steps=steps)
+              + ' that burglary is true:')
+        answer = bayes_net.mcmc(evidence={"burglary": "T"},
+                                query=["John_calls"], steps=steps)
         print(answer)
         print()
         print('Probability of earthquake under condition that burglary is true'
-            + ' and alarm is true:')
-        answer = bayes_net.mcmc(evidence={"burglary":"T", "alarm":"T"},
-            query=["earthquake"], steps=steps)
+              + ' and alarm is true:')
+        answer = bayes_net.mcmc(evidence={"burglary": "T", "alarm": "T"},
+                                query=["earthquake"], steps=steps)
         print(answer)
 
         """
@@ -273,36 +272,36 @@ def main(args):
 
     elif args[0] == "flower.json" or args[0] == "f2.json":
         print('Probability of flower_species under condition'
-            + ' that color is red:')
-        answer = bayes_net.mcmc(evidence={"color":"red"},
-            query=["flower_species"], steps=steps)
+              + ' that color is red:')
+        answer = bayes_net.mcmc(evidence={"color": "red"},
+                                query=["flower_species"], steps=steps)
         print(answer)
         print()
         print('Probability of flower_species under condition'
-            + ' that color is blue:')
-        answer = bayes_net.mcmc(evidence={"color":"blue"},
-            query=["flower_species"], steps=steps)
+              + ' that color is blue:')
+        answer = bayes_net.mcmc(evidence={"color": "blue"},
+                                query=["flower_species"], steps=steps)
         print(answer)
         print()
         print('Probability of color under condition'
-            + ' that flower_species is rose:')
-        answer = bayes_net.mcmc(evidence={"flower_species":"rose"},
-            query=["color"], steps=steps)
+              + ' that flower_species is rose:')
+        answer = bayes_net.mcmc(evidence={"flower_species": "rose"},
+                                query=["color"], steps=steps)
         print(answer)
         print()
         print('Probability of color under condition'
-            + ' that flower_species is tulip:')
-        answer = bayes_net.mcmc(evidence={"flower_species":"tulip"},
-            query=["color"], steps=steps)
+              + ' that flower_species is tulip:')
+        answer = bayes_net.mcmc(evidence={"flower_species": "tulip"},
+                                query=["color"], steps=steps)
         print(answer)
         print()
         print('Probability of color under condition'
-            + ' that flower_species is iris:')
-        answer = bayes_net.mcmc(evidence={"flower_species":"iris"},
-            query=["color"], steps=steps)
+              + ' that flower_species is iris:')
+        answer = bayes_net.mcmc(evidence={"flower_species": "iris"},
+                                query=["color"], steps=steps)
         print(answer)
+
 
 if __name__ == '__main__':
     import sys
     main(sys.argv[1:])
-
