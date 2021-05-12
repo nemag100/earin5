@@ -56,7 +56,7 @@ class BayesNet:
             counters[q] = dict.fromkeys(values_of_interest(q), 0.0)
         # Random walking:
         for s in range(steps):
-            x = choice(unknown) # Draw a node not belonging to evidence
+            x = choice(unknown)  # Draw a node not belonging to evidence
             evidence[x] = self.mb_sampling(x, evidence)
             for q in query:
                 counters[q][evidence[q]] += 1
